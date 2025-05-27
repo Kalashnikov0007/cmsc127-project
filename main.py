@@ -63,6 +63,7 @@ def print_menu_border(title, options):
 
 from core import (
     add_organization, add_member,
+    edit_organization, edit_member,
     delete_organization, delete_member,
     show_organizations, show_members,
     show_tables
@@ -141,10 +142,10 @@ def core_menu():
             add_member()
             pause()
         elif choice == "3":
-            #edit_organization()
+            edit_organization()
             pause()
         elif choice == "4":
-            #edit_member()
+            edit_member()
             pause()
         elif choice == "5":
             delete_organization()
