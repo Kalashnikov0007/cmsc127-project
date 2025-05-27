@@ -213,3 +213,131 @@ def view_late_payments():
         print(f"Error: {err}")
     finally:
         conn.close()
+
+def view_active_vs_inactive_percentage():
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        org_id = input("Enter Organization ID: ")
+        num_semesters = int(input("Enter number of recent semesters to analyze: "))
+
+        # Get latest semesters
+        subquery = f"""
+        SELECT membership_status
+        FROM assigns
+        WHERE organization_id = %s
+        ORDER BY academic_year DESC, 
+                 FIELD(semester, 'Second', 'First') DESC
+        LIMIT {num_semesters}
+        """
+
+        cursor.execute(f"""
+        SELECT membership_status, COUNT(*) AS count
+        FROM ({subquery}) AS recent
+        GROUP BY membership_status
+        """, (org_id,) * 2)
+
+        results = cursor.fetchall()
+        total = sum([row[1] for row in results])
+
+        print(f"\nActive vs Inactive Members in Org ID {org_id} (Last {num_semesters} semesters):")
+        for status, count in results:
+            percent = (count / total) * 100 if total > 0 else 0
+            print(f"{status}: {count} members ({percent:.2f}%)")
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        conn.close()
+
+def view_alumni_as_of_date():
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        org_id = input("Enter Organization ID: ")
+        date_as_of = input("Enter cutoff date (YYYY-MM-DD): ")
+
+        query = """
+        SELECT org.name AS `Organization Name`, mem.name AS `Name`, a.membership_status AS `Status`
+        FROM organization org
+        JOIN assigns a ON org.organization_id = a.organization_id
+        JOIN member mem ON mem.student_number = a.student_number
+        WHERE a.membership_status = 'Alumni'
+            AND org.organization_id = %s
+            AND mem.graduation_date <= %s
+        """
+        cursor.execute(query, (org_id, date_as_of))
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+
+        print(f"\nAlumni Members of Organization ID {org_id} as of {date_as_of}:")
+        print_report(columns, results)
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        conn.close()
+
+def view_dues_summary_as_of_date():
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        org_id = input("Enter Organization ID: ")
+        date_as_of = input("Enter cutoff date (YYYY-MM-DD): ")
+
+        query = """
+        SELECT org.name AS `Organization Name`, f.payment_status AS `Payment Status`, SUM(f.amount) AS `Total Amount`
+        FROM organization org
+        JOIN fee f ON org.organization_id = f.organization_id
+        WHERE org.organization_id = %s AND f.date_issued <= %s
+        GROUP BY f.payment_status
+        """
+        cursor.execute(query, (org_id, date_as_of))
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+
+        print(f"\nDues Summary for Organization ID {org_id} as of {date_as_of}:")
+        print_report(columns, results)
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        conn.close()
+
+def view_highest_debt_members():
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        org_id = input("Enter Organization ID: ")
+        semester = input("Enter semester (First or Second): ")
+        acad_year = input("Enter academic year (e.g. 2023-2024): ")
+
+        query = """
+        SELECT org.name AS `Organization Name`, mem.name AS `Name`, SUM(f.amount) AS `Total Debt`
+        FROM organization org
+        JOIN fee f ON org.organization_id = f.organization_id
+        JOIN member mem ON mem.student_number = f.student_number
+        WHERE org.organization_id = %s AND f.semester = %s AND f.academic_year = %s AND f.payment_status = 'Not Paid'
+        GROUP BY mem.student_number
+        HAVING `Total Debt` = (
+            SELECT MAX(total_debt)
+            FROM (
+                SELECT SUM(f2.amount) AS total_debt
+                FROM fee f2
+                WHERE f2.organization_id = %s AND f2.semester = %s AND f2.academic_year = %s AND f2.payment_status = 'Not Paid'
+                GROUP BY f2.student_number
+            ) AS sub
+        )
+        """
+        cursor.execute(query, (org_id, semester, acad_year, org_id, semester, acad_year))
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+
+        print(f"\nMember(s) with Highest Debt in Org ID {org_id}, {semester} Semester, AY {acad_year}:")
+        print_report(columns, results)
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        conn.close()
+

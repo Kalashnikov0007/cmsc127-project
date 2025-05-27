@@ -78,3 +78,39 @@ def show_fees():
         print(row)
     cursor.close()
     conn.close()
+
+
+def add_has():
+    student_number = input("Student Number: ")
+    organization_id = int(input("Organization ID: "))
+    academic_year_joined = input("Academic Year Joined (e.g., 2024-2025): ")
+    semester_joined = input("Semester Joined (First/Second): ")
+    organization_batch = input("Organization Batch (e.g., Batch 10): ")
+
+    conn = connect()
+    cursor = conn.cursor()
+    sql = """
+    INSERT INTO has
+    (student_number, organization_id, academic_year_joined, semester_joined, organization_batch)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    try:
+        cursor.execute(sql, (student_number, organization_id, academic_year_joined, semester_joined, organization_batch))
+        conn.commit()
+        print("Has record added successfully.")
+    except Exception as e:
+        print("Error adding has record:", e)
+    finally:
+        cursor.close()
+        conn.close()
+
+def show_has():
+    conn = connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM has")
+    rows = cursor.fetchall()
+    print("Has records:")
+    for row in rows:
+        print(row)
+    cursor.close()
+    conn.close()

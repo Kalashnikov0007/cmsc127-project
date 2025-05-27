@@ -25,7 +25,7 @@ def print_logo():
         "▐░▌       ▐░▌▐░▌       ▐░▌▐░▌                       ▐░▌       ▐░▌▐░▌       ▐░▌  ",
         "▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌ ▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌  ",
         "▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌▐░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░▌   ",
-        "▐░▌       ▐░▌▐░█▀▀▀▀█░█▀▀ ▐░▌ ▀▀▀▀▀▀█░▌ ▀▀▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌  ",
+        "▐░▌       ▐░▌▐░█▀▀▀▀█░█▀▀ ▐░▌ ▀▀▀▀▀▀▀█░▌ ▀▀▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌  ",
         "▐░▌       ▐░▌▐░▌     ▐░▌  ▐░▌       ▐░▌             ▐░▌       ▐░▌▐░▌       ▐░▌  ",
         "▐░█▄▄▄▄▄▄▄█░▌▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄█░▌             ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▄ ",
         "▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌             ▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌▐░▌",
@@ -36,13 +36,22 @@ def print_logo():
 
 def print_menu_border(title, options):
     width = get_terminal_width()
+    clear_screen()
     print_logo()
-    print("=" * width)
-    print(center_text(f"{title}", width))
-    print("=" * width)
+    
+    horizontal_border = "╔" + "═" * (width - 2) + "╗"
+    horizontal_separator = "╠" + "═" * (width - 2) + "╣"
+    horizontal_bottom = "╚" + "═" * (width - 2) + "╝"
+    
+    print(horizontal_border)
+    print("║" + title.center(width - 2) + "║")
+    print(horizontal_separator)
+    
     for option in options:
-        print(center_text(option, width))
-    print("=" * width)
+        print("║" + option.center(width - 2) + "║")
+
+    print(horizontal_bottom)
+
 
 # --- Module Imports ---
 
@@ -60,13 +69,43 @@ from report_generation import (
     view_executive_committee_members,
     view_presidents_reverse_chrono,
     view_late_payments,
+    view_active_vs_inactive_percentage,
+    view_alumni_as_of_date,
+    view_highest_debt_members,
+    view_dues_summary_as_of_date,
     print_report
 )
 
 from fees_assigns import (
     add_assigns, add_fee,
-    show_assigns, show_fees
+    show_assigns, show_fees,
+    add_has, show_has
 )
+
+# --- Authentication Data and Function ---
+
+users = {
+    "admin": {"password": "admin123", "role": "admin"},
+    "user": {"password": "user123", "role": "user"},
+    # Add more users here if needed
+}
+
+def login():
+    clear_screen()
+    print_logo()
+    print("\nPlease login to continue.")
+    username = input("Username: ").strip()
+    password = input("Password: ").strip()
+
+    user = users.get(username)
+    if user and user["password"] == password:
+        print(f"\nWelcome, {username}! You are logged in as '{user['role']}'.")
+        pause()
+        return user["role"]
+    else:
+        print("\nInvalid username or password.")
+        pause()
+        return None
 
 # --- Menus ---
 
@@ -95,10 +134,10 @@ def core_menu():
             add_member()
             pause()
         elif choice == "3":
-            #edit_organization()
+            # edit_organization()
             pause()
         elif choice == "4":
-            #edit_member()
+            # edit_member()
             pause()
         elif choice == "5":
             delete_organization()
@@ -131,6 +170,10 @@ def report_menu():
             "4. View Executive Committee Members",
             "5. View Presidents (Chronological)",
             "6. View Late Payments",
+            "7. View % of Active vs Inactive Members (Last N Semesters)",
+            "8. View Alumni Members as of a Given Date",
+            "9. View Total Paid and Unpaid Dues as of a Given Date",
+            "10. View Member(s) with Highest Debt by Semester",
             "0. Back to Main Menu"
         ]
         print_menu_border("Report Generation Menu", options)
@@ -171,11 +214,24 @@ def report_menu():
                 print("\nLate Payments:")
                 print_report(columns, rows)
             pause()
+        elif choice == "7":
+            view_active_vs_inactive_percentage()
+            pause()
+        elif choice == "8":
+            view_alumni_as_of_date()
+            pause()
+        elif choice == "9":
+            view_dues_summary_as_of_date()
+            pause()
+        elif choice == "10":
+            view_highest_debt_members()
+            pause()
         elif choice == "0":
             break
         else:
             print("Invalid choice. Try again.")
             pause()
+
 
 def fees_assigns_menu():
     while True:
@@ -183,11 +239,13 @@ def fees_assigns_menu():
         options = [
             "1. Add Assigns Record",
             "2. Add Fee Record",
-            "3. Show Assigns Records",
-            "4. Show Fee Records",
+            "3. Add Has Record",
+            "4. Show Assigns Records",
+            "5. Show Fee Records",
+            "6. Show Has Records",
             "0. Back to Main Menu"
         ]
-        print_menu_border("Fees and Assigns Menu", options)
+        print_menu_border("Fees, Assigns, Has Menu", options)
         choice = input("Enter choice: ")
 
         if choice == "1":
@@ -197,43 +255,58 @@ def fees_assigns_menu():
             add_fee()
             pause()
         elif choice == "3":
-            show_assigns()
+            add_has()
             pause()
         elif choice == "4":
+            show_assigns()
+            pause()
+        elif choice == "5":
             show_fees()
+            pause()
+        elif choice == "6":
+            show_has()
             pause()
         elif choice == "0":
             break
         else:
             print("Invalid choice. Try again.")
             pause()
+
 
 # --- Main Loop ---
 
 def main():
     while True:
-        clear_screen()
-        options = [
-            "1. Core Functionalities",
-            "2. Report Generation",
-            "3. Fees and Assigns",
-            "0. Exit"
-        ]
-        print_menu_border("Main Menu", options)
-        choice = input("Enter choice: ")
+        role = None
+        while role is None:
+            role = login()
 
-        if choice == "1":
-            core_menu()
-        elif choice == "2":
-            report_menu()
-        elif choice == "3":
-            fees_assigns_menu()
-        elif choice == "0":
-            print("Goodbye!")
-            break
-        else:
-            print("Invalid choice. Try again.")
-            pause()
+        while True:
+            clear_screen()
+            options = ["1. Report Generation"]
+            if role == "admin":
+                options.extend([
+                    "2. Core Functionalities",
+                    "3. Fees and Assigns"
+                ])
+            options.append("0. Logout / Exit")
+
+            print_menu_border("Main Menu", options)
+            choice = input("Enter choice: ")
+
+            if choice == "1":
+                report_menu()
+            elif choice == "2" and role == "admin":
+                core_menu()
+            elif choice == "3" and role == "admin":
+                fees_assigns_menu()
+            elif choice == "0":
+                print("Logging out...")
+                pause()
+                break
+            else:
+                print("Invalid choice or insufficient permissions.")
+                pause()
 
 if __name__ == "__main__":
     main()

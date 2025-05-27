@@ -1,6 +1,5 @@
 DROP DATABASE IF EXISTS `orgdb`;
 CREATE DATABASE IF NOT EXISTS `orgdb`;
-GRANT ALL ON orgdb.* TO 'scott'@'localhost';
 USE `orgdb`;
 
 CREATE TABLE IF NOT EXISTS `organization` (
@@ -150,6 +149,16 @@ CREATE TABLE IF NOT EXISTS `assigns` (
 	CONSTRAINT `fk_assigns_organization_id` FOREIGN KEY (organization_id) REFERENCES organization (organization_id)
 );
 
+INSERT INTO assigns (student_number, organization_id, academic_year, semester, membership_status, committee, role) VALUES
+('2023-12847', 1, '2023-2024', 'First', 'Active', 'Executive Committee', 'President'),
+('2023-45123', 1, '2023-2024', 'First', 'Active', 'Membership Committee', 'Member'),
+('2022-78956', 2, '2022-2023', 'Second', 'Inactive', 'Finance Committee', 'Executive'),
+('2023-34521', 1, '2023-2024', 'Second', 'Active', 'Events Committee', 'Member'),
+('2023-67834', 3, '2023-2024', 'First', 'Active', 'Executive Committee', 'Executive'),
+('2022-91456', 2, '2022-2023', 'First', 'Alumni', 'Membership Committee', 'Member'),
+('2023-58234', 1, '2023-2024', 'Second', 'Active', 'Finance Committee', 'Member');
+
+
 CREATE TABLE IF NOT EXISTS `has` (
 	`student_number` CHAR(10) NOT NULL,
 	`organization_id` INT(5) NOT NULL,
@@ -160,6 +169,16 @@ CREATE TABLE IF NOT EXISTS `has` (
 	CONSTRAINT `fk_has_student_number` FOREIGN KEY (student_number) REFERENCES member (student_number),
 	CONSTRAINT `fk_has_organization_id` FOREIGN KEY (organization_id) REFERENCES organization (organization_id)
 );
+
+INSERT INTO has (student_number, organization_id, academic_year_joined, semester_joined, organization_batch) VALUES
+('2023-12847', 1, '2022-2023', 'First', 'Batch A'),
+('2023-45123', 1, '2021-2022', 'Second', 'Batch B'),
+('2022-78956', 2, '2020-2021', 'First', 'Batch C'),
+('2023-34521', 1, '2023-2024', 'Second', 'Batch A'),
+('2023-67834', 3, '2023-2024', 'First', 'Batch D'),
+('2022-91456', 2, '2021-2022', 'First', 'Batch C'),
+('2023-58234', 1, '2022-2023', 'Second', 'Batch B');
+
 
 CREATE TABLE IF NOT EXISTS `fee` (
 	`fee_id` INT(8) AUTO_INCREMENT,
@@ -177,3 +196,12 @@ CREATE TABLE IF NOT EXISTS `fee` (
 	CONSTRAINT `fk_fee_organization_id` FOREIGN KEY (organization_id) REFERENCES organization (organization_id),
 	CONSTRAINT `fk_fee_student_number` FOREIGN KEY (student_number) REFERENCES member (student_number)
 );
+
+INSERT INTO fee (amount, description, date_issued, due_date, date_settled, payment_status, academic_year, semester, organization_id, student_number) VALUES
+(1500.00, 'Membership Fee', '2023-08-01', '2023-09-01', '2023-08-25', 'Paid', '2023-2024', 'First', 1, '2023-12847'),
+(1200.00, 'Event Fee', '2023-09-15', '2023-10-15', NULL, 'Not Paid', '2023-2024', 'First', 1, '2023-45123'),
+(1300.00, 'Late Fee', '2022-02-01', '2022-03-01', '2022-02-20', 'Paid', '2021-2022', 'Second', 2, '2022-78956'),
+(1000.00, 'Membership Fee', '2023-10-01', '2023-11-01', NULL, 'Not Paid', '2023-2024', 'Second', 1, '2023-34521'),
+(2000.00, 'Special Contribution', '2023-08-10', '2023-09-10', '2023-09-05', 'Paid', '2023-2024', 'First', 3, '2023-67834'),
+(1400.00, 'Membership Fee', '2022-08-01', '2022-09-01', '2022-08-25', 'Paid', '2021-2022', 'First', 2, '2022-91456'),
+(1600.00, 'Event Fee', '2023-11-01', '2023-12-01', NULL, 'Not Paid', '2023-2024', 'Second', 1, '2023-58234');
