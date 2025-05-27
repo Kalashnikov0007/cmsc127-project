@@ -38,23 +38,23 @@ def view_members_by_org_details(organization_id):
     try:
         query = """
         SELECT org.name AS `Organization Name`, mem.name AS `Name`, a.role AS `Role`, 
-               a.membership_status AS `Status`, mem.gender AS `Gender`, 
-               mem.degree_program AS `Degree Program`, 
-               CASE 
-                   WHEN h.semester_joined = 'First' THEN SUBSTRING(h.academic_year_joined, 1, 4)
-                   WHEN h.semester_joined = 'Second' THEN SUBSTRING(h.academic_year_joined, 6, 4)
-               END AS `Organization Batch Year`, 
-               a.committee AS `Committee`
+            a.membership_status AS `Status`, mem.gender AS `Gender`, 
+            mem.degree_program AS `Degree Program`, 
+            CASE 
+                WHEN h.semester_joined = 'First' THEN SUBSTRING(h.academic_year_joined, 1, 4)
+                WHEN h.semester_joined = 'Second' THEN SUBSTRING(h.academic_year_joined, 6, 4)
+            END AS `Organization Batch Year`, 
+            a.committee AS `Committee`
         FROM organization org
         JOIN assigns a ON org.organization_id = a.organization_id
         JOIN has h ON org.organization_id = h.organization_id AND a.student_number = h.student_number
         JOIN member mem ON mem.student_number = a.student_number
         WHERE org.organization_id = %s
         ORDER BY a.role, a.membership_status, mem.gender, mem.degree_program, 
-                 CASE 
-                     WHEN h.semester_joined = 'First' THEN SUBSTRING(h.academic_year_joined, 1, 4)
-                     WHEN h.semester_joined = 'Second' THEN SUBSTRING(h.academic_year_joined, 6, 4)
-                 END, a.committee
+            CASE 
+                WHEN h.semester_joined = 'First' THEN SUBSTRING(h.academic_year_joined, 1, 4)
+                WHEN h.semester_joined = 'Second' THEN SUBSTRING(h.academic_year_joined, 6, 4)
+            END, a.committee
         """
         cursor.execute(query, (organization_id,))
         results = cursor.fetchall()
@@ -76,14 +76,14 @@ def view_unpaid_dues_by_org_semester(organization_id, semester, academic_year):
     try:
         query = """
         SELECT org.name AS `Organization Name`, mem.name AS `Name`, f.amount AS `Amount`, 
-               f.payment_status AS `Payment Status`, f.date_issued AS `Date Issued`, f.due_date AS `Due Date`
+            f.payment_status AS `Payment Status`, f.date_issued AS `Date Issued`, f.due_date AS `Due Date`
         FROM organization org
         JOIN fee f ON org.organization_id = f.organization_id
         JOIN member mem ON mem.student_number = f.student_number
         WHERE f.payment_status = 'Not Paid' 
-          AND f.semester = %s 
-          AND f.academic_year = %s 
-          AND org.organization_id = %s
+            AND f.semester = %s 
+            AND f.academic_year = %s 
+            AND org.organization_id = %s
         """
         cursor.execute(query, (semester, academic_year, organization_id))
         results = cursor.fetchall()
@@ -105,12 +105,12 @@ def view_unpaid_dues_by_member(member_name):
     try:
         query = """
         SELECT org.name AS `Organization Name`, mem.name AS `Name`, f.amount AS `Amount`, 
-               f.payment_status AS `Payment Status`, f.date_issued AS `Date Issued`, f.due_date AS `Due Date`
+            f.payment_status AS `Payment Status`, f.date_issued AS `Date Issued`, f.due_date AS `Due Date`
         FROM member mem
         JOIN fee f ON mem.student_number = f.student_number
         JOIN organization org ON org.organization_id = f.organization_id
         WHERE f.payment_status = 'Not Paid' 
-          AND mem.name = %s
+            AND mem.name = %s
         """
         cursor.execute(query, (member_name,))
         results = cursor.fetchall()
@@ -193,7 +193,7 @@ def view_late_payments():
     try:
         sql = """
         SELECT org.name AS `Organization Name`, mem.name AS `Name`, f.fee_id AS `Fee ID`, f.payment_status AS `Payment Status`, 
-               f.due_date AS `Due Date`, f.date_settled AS `Date Settled`, f.semester AS `Semester`, f.academic_year AS `Academic Year`
+            f.due_date AS `Due Date`, f.date_settled AS `Date Settled`, f.semester AS `Semester`, f.academic_year AS `Academic Year`
         FROM organization org, member mem, fee f
         WHERE org.organization_id = f.organization_id AND mem.student_number = f.student_number 
             AND org.organization_id = %s AND f.semester = %s AND f.academic_year = %s

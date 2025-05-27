@@ -49,7 +49,7 @@ def print_menu_border(title, options):
 from core import (
     add_organization, add_member,
     delete_organization, delete_member,
-    get_organizations, get_members,
+    show_organizations, show_members,
     show_tables
 )
 
@@ -76,12 +76,14 @@ def core_menu():
         options = [
             "1. Add Organization",
             "2. Add Member",
-            "3. Delete Organization",
-            "4. Delete Member",
-            "5. Show Organizations",
-            "6. Show Members",
-            "7. Show Tables",
-            "8. Back to Main Menu"
+            "3. Edit Organization",
+            "4. Edit Member",
+            "5. Delete Organization",
+            "6. Delete Member",
+            "7. Show Organizations",
+            "8. Show Members",
+            "9. Show Tables",
+            "0. Back to Main Menu"
         ]
         print_menu_border("Core Functionality Menu", options)
         choice = input("Enter choice: ")
@@ -93,23 +95,27 @@ def core_menu():
             add_member()
             pause()
         elif choice == "3":
-            org_id = int(input("Enter Organization ID to delete: "))
-            delete_organization(org_id)
+            #edit_organization()
             pause()
         elif choice == "4":
-            student_number = input("Enter Student Number to delete: ")
-            delete_member(student_number)
+            #edit_member()
             pause()
         elif choice == "5":
-            get_organizations()
+            delete_organization()
             pause()
         elif choice == "6":
-            get_members()
+            delete_member()
             pause()
         elif choice == "7":
-            show_tables()
+            show_organizations()
             pause()
         elif choice == "8":
+            show_members()
+            pause()
+        elif choice == "9":
+            show_tables()
+            pause()
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Try again.")
@@ -125,7 +131,7 @@ def report_menu():
             "4. View Executive Committee Members",
             "5. View Presidents (Chronological)",
             "6. View Late Payments",
-            "7. Back to Main Menu"
+            "0. Back to Main Menu"
         ]
         print_menu_border("Report Generation Menu", options)
         choice = input("Enter choice: ")
@@ -165,7 +171,7 @@ def report_menu():
                 print("\nLate Payments:")
                 print_report(columns, rows)
             pause()
-        elif choice == "7":
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Try again.")
@@ -179,7 +185,7 @@ def fees_assigns_menu():
             "2. Add Fee Record",
             "3. Show Assigns Records",
             "4. Show Fee Records",
-            "5. Back to Main Menu"
+            "0. Back to Main Menu"
         ]
         print_menu_border("Fees and Assigns Menu", options)
         choice = input("Enter choice: ")
@@ -196,7 +202,7 @@ def fees_assigns_menu():
         elif choice == "4":
             show_fees()
             pause()
-        elif choice == "5":
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Try again.")
@@ -211,7 +217,7 @@ def main():
             "1. Core Functionalities",
             "2. Report Generation",
             "3. Fees and Assigns",
-            "4. Exit"
+            "0. Exit"
         ]
         print_menu_border("Main Menu", options)
         choice = input("Enter choice: ")
@@ -222,7 +228,7 @@ def main():
             report_menu()
         elif choice == "3":
             fees_assigns_menu()
-        elif choice == "4":
+        elif choice == "0":
             print("Goodbye!")
             break
         else:

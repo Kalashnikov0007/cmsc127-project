@@ -4,8 +4,8 @@ def connect():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Tyler123",
-        database="org_db"  
+        password="diego123",
+        database="orgdb"  
     )
 
 if __name__ == "__main__":

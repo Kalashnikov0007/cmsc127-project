@@ -1,9 +1,24 @@
+import datetime
 from db import connect
 import mysql.connector
 
 def add_organization():
-    name = input("Organization name: ")
-    description = input("Description: ")
+    while True:
+        name = input("Organization name: ").strip()
+        if not name:
+            print("Error: Organization name cannot be empty.")
+        elif len(name) > 100:
+            print("Error: Organization name is too long (max 100 characters).")
+        else:
+            break
+
+    while True:
+        description = input("Description: ").strip()
+        if len(description) > 500:
+            print("Error: Description is too long (max 500 characters).")
+        else:
+            break
+
     conn = connect()
     cursor = conn.cursor()
     try:
@@ -16,31 +31,80 @@ def add_organization():
     finally:
         conn.close()
 
-def delete_organization(organization_id):
-    conn = connect()
-    cursor = conn.cursor()
-    try:
-        sql = "DELETE FROM organization WHERE organization_id = %s"
-        cursor.execute(sql, (organization_id,))
-        conn.commit()
-        if cursor.rowcount > 0:
-            print(f"Organization with ID {organization_id} deleted.")
-        else:
-            print(f"No organization found with ID {organization_id}.")
-    except mysql.connector.Error as err:
-        print(f"Error deleting organization: {err}")
-    finally:
-        conn.close()
 
 def add_member():
-    student_number = input("Enter student number: ")
-    name = input("Enter member name: ")
-    gender = input("Enter gender (Male/Female/Non-binary/Other/Prefer not to say): ")
-    degree_program = input("Enter degree program: ")
-    academic_batch = input("Enter academic batch (year): ")
-    graduation_date = input("Enter graduation date (YYYY-MM-DD or leave blank): ")
-    graduation_semester = input("Enter graduation semester (First/Second or leave blank): ")
-    graduation_year = input("Enter graduation year (year or leave blank): ")
+    while True:
+        student_number = input("Enter student number: ").strip()
+        if len(student_number) != 10:
+            print("Error: Student number must be exactly 10 characters (XXXX-XXXXX).")
+        else:
+            break
+
+    while True:
+        name = input("Enter member name: ").strip()
+        if not name:
+            print("Error: Name cannot be empty.")
+        elif len(name) > 35:
+            print("Error: Name is too long (max 35 characters).")
+        else:
+            break
+
+    valid_genders = ['Male', 'Female', 'Non-binary', 'Other', 'Prefer not to say']
+    while True:
+        gender = input("Enter gender (Male/Female/Non-binary/Other/Prefer not to say): ").strip()
+        if gender not in valid_genders:
+            print("Error: Invalid gender.")
+        else:
+            break
+
+    while True:
+        degree_program = input("Enter degree program: ").strip()
+        if not degree_program:
+            print("Error: Degree program cannot be empty.")
+        elif len(degree_program) > 100:
+            print("Error: Degree program is too long (max of 500)")
+        else:
+            break
+
+    while True:
+        academic_batch = input("Enter academic batch year: ").strip()
+        if not academic_batch.isdigit() or len(academic_batch) != 4:
+            print("Error: Academic batch must be a 4-digit year.")
+        else:
+            break
+
+    while True:
+        graduation_date = input("Enter graduation date (YYYY-MM-DD or leave blank): ").strip()
+        if graduation_date == "":
+            graduation_date = None
+            break
+        try:
+            datetime.datetime.strptime(graduation_date, "%Y-%m-%d")
+            break
+        except ValueError:
+            print("Error: Invalid date format.")
+
+    valid_semesters = ['First', 'Second']
+    while True:
+        graduation_semester = input("Enter graduation semester (First/Second or leave blank): ").strip()
+        if graduation_semester == "":
+            graduation_semester = None
+            break
+        elif graduation_semester not in valid_semesters:
+            print("Error: Invalid semester.")
+        else:
+            break
+
+    while True:
+        graduation_year = input("Enter graduation year (YYYY or leave blank): ").strip()
+        if graduation_year == "":
+            graduation_year = None
+            break
+        elif not graduation_year.isdigit() or len(graduation_year) != 4:
+            print("Error: Graduation year must be a 4-digit year.")
+        else:
+            break
+
     conn = connect()
     cursor = conn.cursor()
     try:
@@ -57,7 +121,42 @@ def add_member():
     finally:
         conn.close()
 
-def delete_member(student_number):
+
+def delete_organization():
+    while True:
+        try:
+            org_id = int(input("Enter Organization ID: ").strip())
+            if 1 <= org_id <= 99999:
+                break
+            else:
+                print("Error: Invalid Organization ID (must be from 1 to 99999).")
+        except ValueError:
+            print("Error: Please enter a valid integer.")
+
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        sql = "DELETE FROM organization WHERE organization_id = %s"
+        cursor.execute(sql, (org_id))
+        conn.commit()
+        if cursor.rowcount > 0:
+            print(f"Organization with ID {org_id} deleted.")
+        else:
+            print(f"No organization found with ID {org_id}.")
+    except mysql.connector.Error as err:
+        print(f"Error deleting organization: {err}")
+    finally:
+        conn.close()
+
+
+def delete_member():
+    while True:
+        student_number = input("Enter Student Number to delete: ").strip()
+        if len(student_number) != 10:
+            print("Error: Student number must be exactly 10 characters (XXXX-XXXXX).")
+        else:
+            break
+
     conn = connect()
     cursor = conn.cursor()
     try:
@@ -73,15 +172,58 @@ def delete_member(student_number):
     finally:
         conn.close()
 
+
 def show_tables():
     conn = connect()
     cursor = conn.cursor()
     cursor.execute("SHOW TABLES")
     tables = cursor.fetchall()
     conn.close()
-    print("Tables in database:")
+    print("\nTables in database:")
     for table in tables:
         print(f" - {table[0]}")
+
+
+def show_organizations():
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM organization")
+        orgs = cursor.fetchall()
+        print(f"\n{'ID'.ljust(6)} {'Organization Name'.ljust(101)}")
+        print("-" * 107)
+
+        for org in orgs:
+            id_str = str(org[0]).ljust(6)
+            name_str = str(org[1]).ljust(101)
+            print(f"{id_str} {name_str}")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        conn.close()
+
+
+def show_members():
+    conn = connect()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM member")
+        members = cursor.fetchall()
+        print(f"\n{'Student Number'.ljust(15)} {'Name'.ljust(31)} {'Gender'.ljust(18)} {'Degree Program'.ljust(31)} {'Academic Batch'.ljust(15)}")
+        print("-" * 115)
+
+        for member in members:
+            student_number = str(member[0]).ljust(15)
+            name = str(member[1]).ljust(31)
+            gender = str(member[2]).ljust(18)
+            degree = str(member[3]).ljust(31)
+            batch = str(member[4]).ljust(15)
+            print(f"{student_number} {name} {gender} {degree} {batch}")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        conn.close()
+
 
 def show_table(table_name):
     conn = connect()
@@ -98,32 +240,6 @@ def show_table(table_name):
         for row in rows:
             print(" | ".join(str(col) for col in row))
         print("-" * 40)
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-    finally:
-        conn.close()
-
-def get_organizations():
-    conn = connect()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT * FROM organization")
-        orgs = cursor.fetchall()
-        for org in orgs:
-            print(f"ID: {org[0]}, Name: {org[1]}, Description: {org[2]}")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-    finally:
-        conn.close()
-
-def get_members():
-    conn = connect()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT * FROM member")
-        members = cursor.fetchall()
-        for member in members:
-            print(f"Student Number: {member[0]}, Name: {member[1]}, Gender: {member[2]}, Degree: {member[3]}")
     except mysql.connector.Error as err:
         print(f"Error: {err}")
     finally:
