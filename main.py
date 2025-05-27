@@ -14,6 +14,9 @@ def center_text(text, width):
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def pause():
+    input("\nPress Enter to continue...")
+
 def print_logo():
     logo_lines = [
         "▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄               ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄    ",
@@ -85,24 +88,32 @@ def core_menu():
 
         if choice == "1":
             add_organization()
+            pause()
         elif choice == "2":
             add_member()
+            pause()
         elif choice == "3":
             org_id = int(input("Enter Organization ID to delete: "))
             delete_organization(org_id)
+            pause()
         elif choice == "4":
             student_number = input("Enter Student Number to delete: ")
             delete_member(student_number)
+            pause()
         elif choice == "5":
             get_organizations()
+            pause()
         elif choice == "6":
             get_members()
+            pause()
         elif choice == "7":
             show_tables()
+            pause()
         elif choice == "8":
             break
         else:
             print("Invalid choice. Try again.")
+            pause()
 
 def report_menu():
     while True:
@@ -122,36 +133,43 @@ def report_menu():
         if choice == "1":
             org_id = int(input("Enter Organization ID: "))
             view_members_by_org_details(org_id)
+            pause()
         elif choice == "2":
             org_id = int(input("Enter Organization ID: "))
             semester = input("Enter Semester (First/Second): ")
             academic_year = input("Enter Academic Year (e.g., 2024-2025): ")
             view_unpaid_dues_by_org_semester(org_id, semester, academic_year)
+            pause()
         elif choice == "3":
             member_name = input("Enter Full Name of the Member: ")
             view_unpaid_dues_by_member(member_name)
+            pause()
         elif choice == "4":
             result = view_executive_committee_members()
             if result:
                 columns, rows = result
                 print("\nExecutive Committee Members:")
                 print_report(columns, rows)
+            pause()
         elif choice == "5":
             result = view_presidents_reverse_chrono()
             if result:
                 columns, rows = result
                 print("\nPresidents (Reverse Chronological):")
                 print_report(columns, rows)
+            pause()
         elif choice == "6":
             result = view_late_payments()
             if result:
                 columns, rows = result
                 print("\nLate Payments:")
                 print_report(columns, rows)
+            pause()
         elif choice == "7":
             break
         else:
             print("Invalid choice. Try again.")
+            pause()
 
 def fees_assigns_menu():
     while True:
@@ -168,16 +186,21 @@ def fees_assigns_menu():
 
         if choice == "1":
             add_assigns()
+            pause()
         elif choice == "2":
             add_fee()
+            pause()
         elif choice == "3":
             show_assigns()
+            pause()
         elif choice == "4":
             show_fees()
+            pause()
         elif choice == "5":
             break
         else:
             print("Invalid choice. Try again.")
+            pause()
 
 # --- Main Loop ---
 
@@ -204,6 +227,7 @@ def main():
             break
         else:
             print("Invalid choice. Try again.")
+            pause()
 
 if __name__ == "__main__":
     main()
