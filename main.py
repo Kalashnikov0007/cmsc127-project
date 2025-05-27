@@ -11,6 +11,9 @@ def get_terminal_width():
 def center_text(text, width):
     return text.center(width)
 
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def print_logo():
     logo_lines = [
         "▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄               ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄    ",
@@ -66,6 +69,7 @@ from fees_assigns import (
 
 def core_menu():
     while True:
+        clear_screen()
         options = [
             "1. Add Organization",
             "2. Add Member",
@@ -102,6 +106,7 @@ def core_menu():
 
 def report_menu():
     while True:
+        clear_screen()
         options = [
             "1. View Members by Organization Details",
             "2. View Unpaid Dues by Org & Semester",
@@ -150,6 +155,7 @@ def report_menu():
 
 def fees_assigns_menu():
     while True:
+        clear_screen()
         options = [
             "1. Add Assigns Record",
             "2. Add Fee Record",
@@ -177,6 +183,7 @@ def fees_assigns_menu():
 
 def main():
     while True:
+        clear_screen()
         options = [
             "1. Core Functionalities",
             "2. Report Generation",
