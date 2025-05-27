@@ -218,8 +218,8 @@ def view_active_vs_inactive_percentage():
     conn = connect()
     cursor = conn.cursor()
     try:
-        org_id = input("Enter Organization ID: ")
-        num_semesters = int(input("Enter number of recent semesters to analyze: "))
+        org_id = input("Enter Organization ID: ").strip()
+        num_semesters = int(input("Enter number of recent semesters to analyze: ").strip())
 
         subquery = f"""
         SELECT membership_status
@@ -254,8 +254,8 @@ def view_alumni_as_of_date():
     conn = connect()
     cursor = conn.cursor()
     try:
-        org_id = input("Enter Organization ID: ")
-        date_as_of = input("Enter cutoff date (YYYY-MM-DD): ")
+        org_id = input("Enter Organization ID: ").strip()
+        date_as_of = input("Enter cutoff date (YYYY-MM-DD): ").strip()
 
         query = """
         SELECT org.name AS `Organization Name`, mem.name AS `Name`, a.membership_status AS `Status`
@@ -283,8 +283,8 @@ def view_dues_summary_as_of_date():
     conn = connect()
     cursor = conn.cursor()
     try:
-        org_id = input("Enter Organization ID: ")
-        date_as_of = input("Enter cutoff date (YYYY-MM-DD): ")
+        org_id = input("Enter Organization ID: ").strip()
+        date_as_of = input("Enter cutoff date (YYYY-MM-DD): ").strip()
 
         query = """
         SELECT org.name AS `Organization Name`, f.payment_status AS `Payment Status`, SUM(f.amount) AS `Total Amount`
@@ -310,9 +310,9 @@ def view_highest_debt_members():
     conn = connect()
     cursor = conn.cursor()
     try:
-        org_id = input("Enter Organization ID: ")
-        semester = input("Enter semester (First or Second): ")
-        acad_year = input("Enter academic year (e.g. 2023-2024): ")
+        org_id = input("Enter Organization ID: ").strip()
+        semester = input("Enter semester (First or Second): ").strip()
+        acad_year = input("Enter academic year (e.g. 2023-2024): ").strip()
 
         query = """
         SELECT org.name AS `Organization Name`, mem.name AS `Name`, SUM(f.amount) AS `Total Debt`

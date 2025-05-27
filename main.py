@@ -189,17 +189,17 @@ def report_menu():
         choice = input("Enter choice: ")
 
         if choice == "1":
-            org_id = int(input("Enter Organization ID: "))
+            org_id = int(input("Enter Organization ID: ").strip())
             view_members_by_org_details(org_id)
             pause()
         elif choice == "2":
-            org_id = int(input("Enter Organization ID: "))
-            semester = input("Enter Semester (First/Second): ")
-            academic_year = input("Enter Academic Year (e.g., 2024-2025): ")
+            org_id = int(input("Enter Organization ID: ").strip())
+            semester = input("Enter Semester (First/Second): ").strip()
+            academic_year = input("Enter Academic Year (e.g., 2024-2025): ").strip()
             view_unpaid_dues_by_org_semester(org_id, semester, academic_year)
             pause()
         elif choice == "3":
-            member_name = input("Enter Full Name of the Member: ")
+            member_name = input("Enter Full Name of the Member: ").strip()
             view_unpaid_dues_by_member(member_name)
             pause()
         elif choice == "4":
