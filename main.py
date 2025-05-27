@@ -74,16 +74,16 @@ def core_menu():
     while True:
         clear_screen()
         options = [
-            "1. Add Organization",
-            "2. Add Member",
-            "3. Edit Organization",
-            "4. Edit Member",
+            "1. Add Organization   ",
+            "2. Add Member         ",
+            "3. Edit Organization  ",
+            "4. Edit Member        ",
             "5. Delete Organization",
-            "6. Delete Member",
-            "7. Show Organizations",
-            "8. Show Members",
-            "9. Show Tables",
-            "0. Back to Main Menu"
+            "6. Delete Member      ",
+            "7. Show Organizations ",
+            "8. Show Members       ",
+            "9. Show Tables        ",
+            "0. Back to Main Menu  "
         ]
         print_menu_border("Core Functionality Menu", options)
         choice = input("Enter choice: ")
@@ -126,12 +126,12 @@ def report_menu():
         clear_screen()
         options = [
             "1. View Members by Organization Details",
-            "2. View Unpaid Dues by Org & Semester",
-            "3. View Unpaid Dues by Member",
-            "4. View Executive Committee Members",
-            "5. View Presidents (Chronological)",
-            "6. View Late Payments",
-            "0. Back to Main Menu"
+            "2. View Unpaid Dues by Org & Semester  ",
+            "3. View Unpaid Dues by Member          ",
+            "4. View Executive Committee Members    ",
+            "5. View Presidents (Chronological)     ",
+            "6. View Late Payments                  ",
+            "0. Back to Main Menu                   "
         ]
         print_menu_border("Report Generation Menu", options)
         choice = input("Enter choice: ")
@@ -181,11 +181,11 @@ def fees_assigns_menu():
     while True:
         clear_screen()
         options = [
-            "1. Add Assigns Record",
-            "2. Add Fee Record",
+            "1. Add Assigns Record  ",
+            "2. Add Fee Record      ",
             "3. Show Assigns Records",
-            "4. Show Fee Records",
-            "0. Back to Main Menu"
+            "4. Show Fee Records    ",
+            "0. Back to Main Menu   "
         ]
         print_menu_border("Fees and Assigns Menu", options)
         choice = input("Enter choice: ")
@@ -215,9 +215,9 @@ def main():
         clear_screen()
         options = [
             "1. Core Functionalities",
-            "2. Report Generation",
-            "3. Fees and Assigns",
-            "0. Exit"
+            "2. Report Generation   ",
+            "3. Fees and Assigns    ",
+            "0. Exit                "
         ]
         print_menu_border("Main Menu", options)
         choice = input("Enter choice: ")
